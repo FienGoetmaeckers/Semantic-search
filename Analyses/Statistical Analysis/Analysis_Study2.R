@@ -1,7 +1,7 @@
 library(dplyr)
 library(misty)
 library(tidyverse)
-setwd("C:/Users/fgoetmae/OneDrive - UGent/Documents/Projects/Semantic/data/SpatialSemantic/Full")
+setwd("../../Data")
 
 #read in all relevant files
 data_se <- read.csv("data2.csv")
@@ -218,190 +218,13 @@ ggplot(info, aes(x = tau_se, y = tau_sp)) + geom_point() + geom_smooth(method = 
 ggsave("tau_sp(tau_se).png", device = "png", height = 5/0.8, width = 6/0.8)
 
 
+#####
+#Factor analysis
+#####
+library(factoextra)
+library(tidyverse)
 
-####
-#Q: does tau show overlap because tau is related to score??
-####
-cor.test(info$tau_se,info$score_se , method="pearson")
-cor <- cor.test(info$tau_se,info$score_se, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = tau_se, y = score_se)) + geom_point() + geom_smooth(method = 'lm', color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Semantic random exploration", y = "Semantic score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.03, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(tau_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-cor.test(info$tau_sp,info$score_sp , method="pearson")
-cor <- cor.test(info$tau_sp,info$score_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = tau_sp, y = score_sp)) + geom_point() + geom_smooth(method = 'lm', color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Spatial random exploration", y = "Spatial score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.04, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(tau_sp).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-#check: do the other model parameters correlate with score?
-info$l_fit_se_sc <- scale(info$l_fit_se)
-info$l_fit_sp_sc <- scale(info$l_fit_sp)
-info$beta_se_sc <- scale(info$beta_se)
-info$beta_sp_sc <- scale(info$beta_sp)
-info$tau_se_sc <- scale(info$tau_se)
-info$tau_sp_sc <- scale(info$tau_sp)
-
-summary(glm(score_se ~ l_fit_se_sc * beta_se_sc * tau_se_sc, data = info))
-summary(glm(score_sp ~ l_fit_sp_sc * beta_sp_sc * tau_sp_sc, data = info))
-
-#for generalization
-cor.test(info$l_fit_se,info$score_se , method="pearson")
-cor <- cor.test(info$l_fit_se,info$score_se, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = l_fit_se, y = score_se)) + geom_point() + geom_smooth(method = 'lm', color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Semantic generalization", y = "Semantic score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 1, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(l_fit_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-cor.test(info$l_fit_sp,info$score_sp , method="pearson")
-cor <- cor.test(info$l_fit_sp,info$score_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = l_fit_sp, y = score_sp)) + geom_point() + geom_smooth(method = 'lm', color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Spatial generalization", y = "Spatial score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 1, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(l_fit_sp).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-#for UG exploration
-cor.test(info$beta_se,info$score_se , method="pearson")
-cor <- cor.test(info$beta_se,info$score_se, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = beta_se, y = score_se)) + geom_point() + geom_smooth(method = 'lm', color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Semantic UG exploration", y = "Semantic score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.03, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(beta_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-cor.test(info$beta_sp,info$score_sp , method="pearson")
-cor <- cor.test(info$beta_sp,info$score_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info, aes(x = beta_sp, y = score_sp)) + geom_point() + geom_smooth(method = 'lm', color = color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Spatial UG exploration", y = "Spatial score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.04, y = 30, label = paste0("r = ", r, ", ", ptext)))
-ggsave("Score(beta_sp).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-
-#for UG exploration when we filter out everyone at the lower bound
-cor.test(info_filter$beta_se,info_filter$score_se , method="pearson")
-cor <- cor.test(info_filter$beta_se,info_filter$score_se, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info_filter, aes(x = beta_se, y = score_se)) + geom_point() + geom_smooth(method = 'lm', color = color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Semantic UG exploration", y = "Semantic score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.03, y = 40, label = paste0("r = ", r, ", ", ptext)))
-ggsave("FILTEREDScore(beta_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-cor.test(info_filter$beta_sp,info_filter$score_sp , method="pearson")
-cor <- cor.test(info_filter$beta_sp,info_filter$score_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info_filter, aes(x = beta_sp, y = score_sp)) + geom_point() + geom_smooth(method = 'lm', color = color = "indianred4", fill = "indianred2") +
-  theme_classic() + scale_x_log10()  + 
-  labs(x = "Spatial UG exploration", y = "Spatial score") + theme(text = element_text(size = 20)) + 
-  geom_label(aes(x = 0.04, y = 40, label = paste0("r = ", r, ", ", ptext)))
-ggsave("FILTEREDScore(beta_sp).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-
-#what can we learn about generalization and random exploration in that filtered sample?
-#generalization first
-cor.test(info_filter$l_fit_se,info_filter$l_fit_sp , method="pearson")
-cor <- cor.test(info_filter$l_fit_se,info_filter$l_fit_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info_filter, aes(x = l_fit_se, y = l_fit_sp)) + geom_point() + geom_smooth(method = 'lm', color = color = "indianred4", fill = "indianred2") +
-  theme_classic() + 
-  labs(x = "Semantic generalization", y = "Spatial generalization") + theme(text = element_text(size = 20)) + 
-  scale_x_log10() + scale_y_log10() + 
-  geom_label(aes(x = 0.7, y = 0.1, label = paste0("r = ", r, ", ", ptext)))
-ggsave("filtered_l_fit_sp(l_fit_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-#random exploratin then
-cor.test(info_filter$tau_se,info_filter$tau_sp , method="pearson")
-cor <- cor.test(info_filter$tau_se,info_filter$tau_sp, method="spearman", exact = FALSE)
-p <- round(cor$p.value, 3)
-if (p < 0.001){
-  ptext <- "p < .001"
-}else{
-  ptext <- paste0("p = ", p)
-}
-r <- round(cor$estimate, 2)
-ggplot(info_filter, aes(x = tau_se, y = tau_sp)) + geom_point() + geom_smooth(method = 'lm', color = color = "indianred4", fill = "indianred2") +
-  theme_classic() + 
-  labs(x = "Semantic random exploration", y = "Spatial random exploration") + theme(text = element_text(size = 20)) + 
-  scale_x_log10() + scale_y_log10() + 
-  geom_label(aes(x = 0.3, y = 0.03, label = paste0("r = ", r, ", ", ptext)))
-ggsave("filtered_tau_sp(tau_se).png", device = "png", height = 5/0.8, width = 6/0.8)
-
-
-##################################################################################################
-#dive deeper, holistic analysis: which model parameters from se predict sp (and vice versa)?
-#canonical correlation analysis
-library(candisc)
 info <- info[!is.na(info$score_se) & !is.na(info$score_sp),]
-###
-#A
-###
 info$nov_sc_se <- scale(info$Novclicks_se)
 info$av_distance_se <- ifelse(info$av_distance_se > 100, 12, info$av_distance_se)
 info$d_sc_se <- scale(info$av_distance_se)
@@ -409,27 +232,6 @@ info$dprev_sc_se <- scale(info$av_distance_prev_se)
 info$nov_sc_sp <- scale(info$Novclicks_sp)
 info$d_sc_sp <- scale(info$av_distance_sp)
 info$dprev_sc_sp <- scale(info$av_distance_prev_sp)
-
-X <-  as.matrix(info[,c("nov_sc_se", "d_sc_se", "dprev_sc_se")])
-Y <- as.matrix(info[,c("nov_sc_sp", "d_sc_sp", "dprev_sc_sp")])
-cc <- cancor(X, Y, set.names=c("semantic", "spatial"), na.omit=TRUE)
-summary(cc)
-zapsmall(cor(scores(cc, type="x"), scores(cc, type="y")))
-#variance explained per canonical dimension:
-cc$cancor^2
-cc$structure
-#here we see:
-round(cc$structure$X.xscores, 3) #first canonical relationship is driven by large contributions of all 3 exploration measures on the semantic side
-round(cc$structure$Y.yscores, 3) #and large contributions of novel clic and distance from hv clicks on the spatial side, with moderate distr of distance previous
-#the canonical correlation of the first variate is .33
-
-#A canonical correlation analysis revealed one meaningful canonical function linking semantic and spatial parameters, 
-#rc=.33. The first semantic canonical variate was associated with all exploration paraameters 
-
-###
-#B
-###
-#let's add all beh measures in one!
 info$score_sc_se <- scale(info$score_se)
 info$slope_score_sc_se <- scale(info$slope_score_se)
 info$slope_nov_sc_se <- scale(info$slope_novel_se)
@@ -442,27 +244,6 @@ info$slope_nov_sc_sp <- scale(info$slope_novel_sp)
 info$slope_d_sc_sp <- scale(info$slope_dhv_sp)
 info$slope_dprev_sc_sp <- scale(info$slope_dprev_sp)
 info$slope_dprew_sc_sp <- scale(info$slope_dprew_sp)
-
-X <-  as.matrix(info[,c("nov_sc_se", "d_sc_se", "dprev_sc_se", "score_sc_se", "slope_score_sc_se", "slope_nov_sc_se", "slope_d_sc_se", "slope_dprev_sc_se", "slope_dprew_sc_se")])
-Y <-  as.matrix(info[,c("nov_sc_sp", "d_sc_sp", "dprev_sc_sp", 
-                        "score_sc_sp", "slope_score_sc_sp", 
-                        "slope_nov_sc_sp", "slope_d_sc_sp", "slope_dprev_sc_sp", 
-                        "slope_dprew_sc_sp")])
-cc <- cancor(X, Y, set.names=c("semantic", "spatial"), na.omit=TRUE)
-summary(cc)
-zapsmall(cor(scores(cc, type="x"), scores(cc, type="y")))
-#variance explained per canonical dimension:
-cc$cancor^2
-cc$structure
-#here we see:
-round(cc$structure$X.xscores, 3) 
-round(cc$structure$Y.yscores, 3) 
-
-
-###
-#C
-###
-#computational measures
 info["logl_se"] <- scale(log(info$l_fit_se, 10))
 info["logb_se"] <- scale(log(info$beta_se, 10))
 info["logt_se"] <- scale(log(info$tau_se, 10))
@@ -471,55 +252,7 @@ info["logl_sp"] <- scale(log(info$l_fit_sp, 10))
 info["logb_sp"] <- scale(log(info$beta_sp, 10))
 info["logt_sp"] <- scale(log(info$tau_sp, 10))
 
-X <-  as.matrix(info[,c("logl_se", "logb_se", "logt_se", "logphi_se")])
-Y <- as.matrix(info[,c("logl_sp", "logb_sp", "logt_sp")])
-cc <- cancor(X, Y, set.names=c("semantic", "spatial"))
-summary(cc)
-zapsmall(cor(scores(cc, type="x"), scores(cc, type="y")))
-#variance explained per canonical dimension:
-cc$cancor^2
-cc$structure
-#here we see:
-round(cc$structure$X.xscores, 3) #first canonical relationship is driven by tau_se on the semantic side, moderate contribution of l_fit_se
-round(cc$structure$Y.yscores, 3) #and tau_sp on the spatial side, moderate contribution of beta_sp
-# with weaker contr from the other variables
-#the canonical correlation of the first variate is .420
-#individuals who have high tau_se also tend to have high tau_sp (latent composites correlating at approx .42, shared variance .177)
 
-#A canonical correlation analysis revealed one meaningful canonical function linking semantic and spatial parameters, 
-#rc=.42. The first semantic canonical variate was primarily associated with tau_se (loading = .97), 
-#while the corresponding spatial canonical variate was primarily associated with tau_sp (loading = .92). 
-#This suggests that individual differences in semantic and spatial tau parameters are positively related.
-
-###
-#D
-###
-#ALL MEASURES!
-X <-  as.matrix(info[,c("nov_sc_se", "d_sc_se", "dprev_sc_se", 
-                        "score_sc_se", "slope_score_sc_se", 
-                        "slope_nov_sc_se", "slope_d_sc_se", "slope_dprev_sc_se", 
-                        "slope_dprew_sc_se",
-                        "logl_se", "logb_se", "logt_se", "logphi_se")])
-Y <-  as.matrix(info[,c("nov_sc_sp", "d_sc_sp", "dprev_sc_sp", 
-                        "score_sc_sp", "slope_score_sc_sp", 
-                        "slope_nov_sc_sp", "slope_d_sc_sp", "slope_dprev_sc_sp", 
-                        "slope_dprew_sc_sp",
-                        "logl_sp", "logb_sp", "logt_sp")])
-cc <- cancor(X, Y, set.names=c("semantic", "spatial"), na.omit=TRUE)
-summary(cc)
-zapsmall(cor(scores(cc, type="x"), scores(cc, type="y")))
-#variance explained per canonical dimension:
-cc$cancor^2
-cc$structure
-#here we see:
-round(cc$structure$X.xscores, 3) 
-round(cc$structure$Y.yscores, 3) 
-
-#####
-#correlation plot
-#####
-library(corrplot)
-library(Hmisc)
 info_filter <- info[c("nov_sc_se", "d_sc_se", "dprev_sc_se", 
                       "score_sc_se", "slope_score_sc_se", 
                       "slope_nov_sc_se", "slope_d_sc_se", "slope_dprev_sc_se", 
@@ -531,16 +264,7 @@ info_filter <- info[c("nov_sc_se", "d_sc_se", "dprev_sc_se",
                       "slope_dprew_sc_sp",
                       "logl_sp", "logb_sp", "logt_sp")]
 info_filter <- na.omit(info_filter)
-c <- cor(info_filter, method = c("spearman"))
-res <- rcorr(as.matrix(info_filter), type = c("spearman"))
-corrplot(res$r, type="upper", p.mat = res$P, sig.level = 0.05, insig = "blank")
-round(rcorr(as.matrix(info_filter))$P, 3)
 
-#####
-#Factor analysis
-#####
-library(factoextra)
-library(tidyverse)
 PCA <- prcomp(info_filter, scale = TRUE)
 fviz_eig(PCA)
 
